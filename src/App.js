@@ -7,6 +7,15 @@ function App() {
     mode: "analogic",
     color: "#24B1E0"
   })
+  
+  const boolArray = [];
+  const refArray = [];
+  for (let i = 0; i <= 5; i++) {
+    boolArray.push(false);
+    refArray.push(React.createRef())
+  }
+  const [isCopied, setIsCopied] = React.useState(boolArray);
+  const refs = React.useRef(refArray);
 
   React.useEffect(() => {
     searchScheme();
@@ -35,11 +44,12 @@ function App() {
     }))
   }
 
-  const copyToClipboard = (e) => {
-    const {textContent} = e.target;
+  const copyToClipboard = (index, e) => {
+    const text = refs.current[index].current.textContent;
     navigator.permissions.query({ name: "clipboard-write" }).then(result => {
       if (result.state === "granted" || result.state === "prompt") {
-        navigator.clipboard.writeText(textContent);
+        navigator.clipboard.writeText(text);
+        setIsCopied(prevArray => prevArray.map((bool, i) => (index === i)))
       }
     });
   }
@@ -63,12 +73,25 @@ function App() {
       </form>
       <div className={`colors-container ${scheme && "box-shadow"}`}>
         {
-          scheme && scheme.map(schemeColor => <div key={schemeColor} className={'color-container'} style={{'--bg-color': `#${schemeColor}`}}></div>)
+          scheme && scheme.map((schemeColor, i) => (
+            <div 
+              key={schemeColor} 
+              className={'color-container'} 
+              style={{'--bg-color': `#${schemeColor}`}} 
+              onClick={(e) => copyToClipboard(i, e)}
+            >
+                {isCopied[i] && <span className={`copied-text`}>Copied!</span>}
+            </div>
+          ))
         }
       </div>
       <div className={`hex-values-container`}>
         {
-          scheme && scheme.map(schemeColor => <div key={schemeColor} className={`hex-value-container`}><span onClick={copyToClipboard}>#{schemeColor}</span></div>)
+          scheme && scheme.map((schemeColor, i) => (
+            <div key={schemeColor} className={`hex-value-container`}>
+              <span ref={refs.current[i]} onClick={(e) => copyToClipboard(i, e)}>#{schemeColor}</span>
+            </div>
+          ))
         }
       </div>
     </div>

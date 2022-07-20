@@ -67,6 +67,7 @@ input[type="color"] {
   grid-template-rows: 5rem 80vh 3rem;
   background: #FFF;
   width: 80vw;
+  border-radius: 5px;
 }
 
 .colors-container {
@@ -86,6 +87,15 @@ input[type="color"] {
 
 .color-container {
   background-color: var(--bg-color);
+  position: relative;
+  display: grid;
+  place-items: center;
+}
+
+.color-container:hover {
+  -moz-box-shadow: 0px 1px 5px 0px #676767;
+  -webkit-box-shadow: 0px 1px 5px 0px #676767;
+  box-shadow: 0px 1px 5px 0px #676767;
 }
 
 .hex-value-container {
@@ -97,8 +107,38 @@ input[type="color"] {
   letter-spacing: 0.5px;
 }
 
+.hex-value-container:hover {
+  border-bottom: 1px solid black;
+}
+
 .box-shadow {
   -moz-box-shadow: 0px 1px 5px 0px #676767;
   -webkit-box-shadow: 0px 1px 5px 0px #676767;
   box-shadow: 0px 1px 5px 0px #676767;
+}
+
+.copied-text {
+  padding: 1em;
+  border: 1px solid black;
+  border-radius: 5px;
+  background-color: black;
+  color: white;
+  font-weight: bold;
+  font-size: 1.1rem;
+  animation: fadeInOut 4s ease-in-out;
+  opacity: 0;
+}
+
+@keyframes fadeInOut {
+  0% {
+    opacity: 0;
+  }
+
+  10% {
+    opacity: 1;
+  }
+
+  42.5% {
+    opacity: 0;
+  }
 }
