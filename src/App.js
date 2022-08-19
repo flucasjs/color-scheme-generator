@@ -1,7 +1,12 @@
 import './App.css';
 import React from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import ColorSwatch from './components/ColorSwatch';
+import ColorForm from './components/ColorForm';
+import { useIsDekstop } from './hooks/utils';
 
 function App() {
+  const isSmall = useIsDekstop();
   const [scheme, setScheme] = React.useState("");
   const [formData, setFormData] = React.useState({
     mode: "analogic",
@@ -17,9 +22,6 @@ function App() {
   const [isCopied, setIsCopied] = React.useState(boolArray);
   const refs = React.useRef(refArray);
 
-  React.useEffect(() => {
-    searchScheme();
-  }, [])
 
   const searchScheme = async (e) => {
     e && e.preventDefault();
@@ -44,48 +46,43 @@ function App() {
     }))
   }
 
+  // Remove refs.
   const copyToClipboard = (index, e) => {
     const text = refs.current[index].current.textContent;
+    setIsCopied(prevState => prevState.map(() => false));
+
+    // https://developer.mozilla.org/en-US/docs/Web/API/Permissions#browser_support
     navigator.permissions.query({ name: "clipboard-write" }).then(result => {
       if (result.state === "granted" || result.state === "prompt") {
         navigator.clipboard.writeText(text);
         setIsCopied(prevArray => prevArray.map((bool, i) => (index === i)))
       }
+    }).catch(err => {
+      if (err.name === "TypeError") {
+        navigator.clipboard.writeText(text);
+        setIsCopied(prevArray => prevArray.map((bool, i) => (index === i)))
+      }
     });
   }
+  
+  React.useEffect(() => {
+    searchScheme();
+  }, [])
 
   return (
     <div className={`app-container`}>
-      <form onSubmit={searchScheme}>
-        <input className={`color-input`} name="color" type="color" value={formData.color} onChange={handleChange}></input>
-        <select className={`mode-selector`} name="mode" value={formData.mode} onChange={handleChange}>
-          <option value="">--Select a mode--</option>
-          <option value="analogic">analogic</option>
-          <option value="monochrome">monochrome</option>
-          <option value="monochrome-light">monochrome-light</option>
-          <option value="monochrome-dark">monochrome-dark </option>
-          <option value="complement">complement</option>
-          <option value="analogic-complement">analogic-complement</option>
-          <option value="triad">triad</option>
-          <option value="quad">quad</option>
-        </select>
-        <button className={`submit-button`}>Get Color Scheme</button>
-      </form>
-      <div className={`colors-container ${scheme && "box-shadow"}`}>
-        {
-          scheme && scheme.map((schemeColor, i) => (
-            <div 
-              key={schemeColor} 
-              className={'color-container'} 
-              style={{'--bg-color': `#${schemeColor}`}} 
-              onClick={(e) => copyToClipboard(i, e)}
-            >
-                {isCopied[i] && <span className={`copied-text`}>Copied!</span>}
-            </div>
-          ))
-        }
-      </div>
-      <div className={`hex-values-container`}>
+          <ColorForm searchScheme={searchScheme} formData={formData} handleChange={handleChange}/>
+        
+          <div className={`colors-container`}>
+            {
+              scheme &&
+              scheme.map((schemeColor, i) => (
+                <ColorSwatch schemeColor={schemeColor} copyToClipboard={copyToClipboard} refs={refs} i={i} isSmall={isSmall}/>
+              ))
+            }
+          </div>
+
+      {/* <div className={`hex-values-container`}>
         {
           scheme && scheme.map((schemeColor, i) => (
             <div key={schemeColor} className={`hex-value-container`}>
@@ -93,7 +90,7 @@ function App() {
             </div>
           ))
         }
-      </div>
+      </div> */}
     </div>
   );
 }
