@@ -5,13 +5,47 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  display: grid;
-  place-items: center;
+  /* display: grid;
+  place-items: center; */
   min-height: 100vh;
   background-color: #1C1C1C;
+  /* overflow: hidden; */
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+:root {
+  --bg-color: #FFF;
+}
+
+form {
+  grid-row: 1;
+  justify-self: center;
+  align-items: space-between;
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-between;
+  padding: 1em;
+  width: 100%;
+}
+
+::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+::-webkit-color-swatch{
+  border: 0;
+  border-radius: 0;
+}
+
+::-moz-color-swatch,
+::-moz-focus-inner{
+  border: 0;
+}
+
+::-moz-focus-inner{
+  padding: 0;
 }
